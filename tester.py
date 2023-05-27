@@ -20,7 +20,7 @@ for tup in elements:
         element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID,id))) # Making sure website is loaded first
         elem = driver.find_element(By.ID,id)
         if elem.tag_name != tag_type:
-            raise Exception("type is not the same!")
+            raise Exception("tag_name of element is not the same as defined element!")
         else:
             test_cases[test_counter] = 'T'
         test_counter += 1
