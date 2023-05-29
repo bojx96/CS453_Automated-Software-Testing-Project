@@ -44,7 +44,7 @@ if args.path and args.url:
     for tup in elements:
         tag_type, id = tup[0], tup[1]
         try:
-            element = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            element = WebDriverWait(driver, 2).until(EC.presence_of_element_located(
                 (By.ID, id)))  # Making sure website is loaded first
             elem = driver.find_element(By.ID, id)
             # if elem.tag_name != tag_type:
