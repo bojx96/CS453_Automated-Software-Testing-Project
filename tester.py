@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 from bs4 import BeautifulSoup
 
 
@@ -54,13 +55,24 @@ if args.path and args.url:
             # else:
             #     test_cases[test_counter] = 'T'
             test_cases[test_counter] = 'T'
-            test_counter += 1
+        
         except Exception as e:
-            print(f"Exception Occured: {e}")
-
-    for bool1 in test_cases:
-        if bool1 == 'T':
-            print("\033[92mP", end="")
-        else:
-            print("\033[91mF", end="")
-    print("\033[0m")
+            test_cases[test_counter] = (e,tag_type, id)
+            
+        test_counter += 1
+    no_of_true = test_cases.count('T')
+    print("--------Test cases--------", end = "\n\n")
+    print(
+        f"\033[92m{no_of_true}\u001b[37m/{test_counter} tests passed", end="\n\n")
+    print(
+        f"\033[91m{test_counter - no_of_true}\u001b[37m tests failed", end="\n\n")
+    if no_of_true < test_counter:
+        print("--------Failed tests--------", end = "\n\n")
+    for result in test_cases:
+        if isinstance(result[0], Exception):
+            if isinstance(result[0], TimeoutException):
+                print(f"TimeoutException occured, no such element of type {result[1]} with id {result[2]} was found", end ="\n\n")
+            else:
+                print(f"Exception Occured: {result[0]}")
+                print(type(result[0]), end = "\n\n")
+print("---------------------------", end="\n\n")
