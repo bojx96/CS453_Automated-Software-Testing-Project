@@ -6,6 +6,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 
+
+# MVP2
 search_list = ["input", "button"]
 parser = argparse.ArgumentParser("Input")
 
