@@ -1,22 +1,15 @@
 import "./App.css";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
+
+import LandingPage from "./pages/LandingPage";
+import CreatePage from "./pages/CreatePage";
 
 function App() {
   return (
-    <div className="App">
-      <div>
-        <input id="emailinput-textfield" type="text" placeholder="Email" />
-      </div>
-      <div>
-        <input id="passwordinput-textfield" type="password" placeholder="Password" />
-      </div>
-      <div>
-        <button id="loginbutton-button">Login Button</button>
-      </div>
-      <div>
-        <button id="createaccount-button">Create Account</button>
-      </div>
-    </div>
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/create" element={<CreatePage />} />
+    </Routes>
   );
 }
 
