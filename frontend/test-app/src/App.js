@@ -5,6 +5,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import CreatePage from "./pages/CreatePage";
 import SettingsPage from "./pages/SettingsPage";
+import HomePage from "./pages/HomePage";
 
 function App() {
   const location = useLocation();
@@ -48,6 +49,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/create" element={<CreatePage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/homepage" element={<HomePage />} />
       </Routes>
     </>
   );
