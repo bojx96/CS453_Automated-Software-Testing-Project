@@ -1,5 +1,12 @@
 import "../App.css";
+import { useNavigate } from "react-router-dom";
+
 const LandingPage = () => {
+  let navigate = useNavigate();
+  const routeChange = (buttonText) => {
+    let path = buttonText;
+    navigate(path);
+  };
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column ", height: "100vh" }}>
       <div style={{ display: "flex", padding: 32, flexDirection: "column" }}>
@@ -11,12 +18,12 @@ const LandingPage = () => {
         <input id="passwordinput-textfield" type="password" class="Text-box" />
       </div>
       <div style={{ padding: 32 }}>
-        <button id="loginbutton-button" class="Primary-button">
+        <button id="loginbutton-button" class="Primary-button" onClick={() => routeChange("/homepage")}>
           Login Button
         </button>
       </div>
       <div>
-        <button id="createaccount-button" class="Secondary-button">
+        <button id="createaccount-button" class="Secondary-button" onClick={() => routeChange("/create")}>
           Create Account
         </button>
       </div>
