@@ -1,6 +1,6 @@
 import "./App.css";
 import cookieLogo from "./img/cookieLogo.png";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 
 import LandingPage from "./pages/LandingPage";
 import CreatePage from "./pages/CreatePage";
@@ -9,6 +9,11 @@ import HomePage from "./pages/HomePage";
 
 function App() {
   const location = useLocation();
+  let navigate = useNavigate();
+  const routeChange = (buttonText) => {
+    let path = buttonText;
+    navigate(path);
+  };
   return (
     <>
       {location.pathname != "/" && location.pathname != "/create" ? (
@@ -19,22 +24,22 @@ function App() {
             </div>
             <div style={{ display: "flex", flexDirection: "row", alignItems: "end" }}>
               <div style={{ paddingLeft: 88, paddingRight: 198 }}>
-                <button id="home-button" class="bar-button">
+                <button id="home-button" class="bar-button" onClick={() => routeChange("/homepage")}>
                   Home
                 </button>
               </div>
               <div style={{ paddingRight: 198 }}>
-                <button id="mail-button" class="bar-button">
+                <button id="mail-button" class="bar-button" onClick={() => routeChange("/mail")}>
                   Mail
                 </button>
               </div>
               <div>
-                <button id="settings-button" class="bar-button" style={{ paddingRight: 530 }}>
+                <button id="settings-button" class="bar-button" style={{ paddingRight: 530 }} onClick={() => routeChange("/settings")}>
                   Settings
                 </button>
               </div>
               <div>
-                <button id="signout-button" class="bar-button">
+                <button id="signout-button" class="bar-button" onClick={() => routeChange("/")}>
                   Signout
                 </button>
               </div>
