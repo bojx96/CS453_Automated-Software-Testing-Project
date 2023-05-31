@@ -6,18 +6,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from bs4 import BeautifulSoup
+import os
 
-
-# MVP2
-search_list = ["input", "button"]
-parser = argparse.ArgumentParser("Input")
-
-# add the arguments
-parser.add_argument('-p', '--path', type=str, required=True)
-parser.add_argument('-u', '--url', type=str, required=True)
-
-# get the inputs
-args = parser.parse_args()
 
 def get_elements(soup, name):
     return soup.find_all(name)
@@ -33,14 +23,13 @@ def parsing_elements(filename):
             resulted_list.append((el, obj['id']))
     return resulted_list
 
-# do sth to the inputs
-if args.path and args.url:
-    elements = parsing_elements(args.path)
-    driver = webdriver.Chrome()
-    print(args.url)
-    driver.get(args.url)
+def startDriver():
+    return webdriver.Chrome()
+
+def check_elements(driver, url, elements):
+    driver.get(url)
     test_cases = []
-    for element in elements:
+    for _ in elements:
         test_cases.append('F')
 
     test_counter = 0
@@ -55,24 +44,67 @@ if args.path and args.url:
             # else:
             #     test_cases[test_counter] = 'T'
             test_cases[test_counter] = 'T'
-        
+
         except Exception as e:
-            test_cases[test_counter] = (e,tag_type, id)
-            
+            test_cases[test_counter] = (e, tag_type, id)
+
         test_counter += 1
+    return test_cases
+
+def output_results(test_cases, url):
     no_of_true = test_cases.count('T')
-    print("--------Test cases--------", end = "\n\n")
+    test_counter = len(test_cases)
+    print(f"--------Test cases in {url}--------", end="\n\n")
     print(
         f"\033[92m{no_of_true}\u001b[37m/{test_counter} tests passed", end="\n\n")
     print(
         f"\033[91m{test_counter - no_of_true}\u001b[37m tests failed", end="\n\n")
     if no_of_true < test_counter:
-        print("--------Failed tests--------", end = "\n\n")
+        print(f"--------Failed tests in {url}--------", end="\n\n")
     for result in test_cases:
         if isinstance(result[0], Exception):
             if isinstance(result[0], TimeoutException):
-                print(f"TimeoutException occured, no such element of type {result[1]} with id {result[2]} was found", end ="\n\n")
+                print(
+                    f"TimeoutException occured, no such element of type {result[1]} with id {result[2]} was found", end="\n\n")
             else:
                 print(f"Exception Occured: {result[0]}")
-                print(type(result[0]), end = "\n\n")
-print("---------------------------", end="\n\n")
+                print(type(result[0]), end="\n\n")
+    print("---------------------------", end="\n\n")
+        
+    
+# do sth to the inputs
+
+if __name__ == "__main__":
+    # MVP2
+    search_list = ["input", "button"]
+    parser = argparse.ArgumentParser("Input")
+
+    # add the arguments
+    parser.add_argument('-p', '--path', type=str, required=False)
+    parser.add_argument('-u', '--url', type=str, required=True)
+    parser.add_argument('-f', '--folder', type = str, required= False)
+    
+    # get the inputs
+    args = parser.parse_args()
+    driver = startDriver()
+    if args.folder and args.url:
+        for filename in os.listdir(args.folder):
+            file_path = os.path.join(args.folder, filename)
+            if os.path.isfile(file_path): 
+                # Check if it's a file (not a subdirectory)
+                elements_to_find = parsing_elements(file_path)
+                if filename == "root.html":
+                    test_cases = check_elements(driver, args.url, elements_to_find)
+                    output_results(test_cases, args.url)
+                else:
+                    route_name = filename.split('.')[0]
+                    url = args.url + "/" + route_name
+                    test_cases = check_elements(driver, url, elements_to_find)
+                    output_results(test_cases, url)
+                    
+                    
+    elif args.path and args.url:
+        elements = parsing_elements(args.path)
+        results = check_elements(driver, args.url, elements)
+        output_results(results, args.url)
+
