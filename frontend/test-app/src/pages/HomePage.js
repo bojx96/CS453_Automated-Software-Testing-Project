@@ -6,6 +6,9 @@ const HomePage = () => {
       <img id="cookielogo" src={cookieColour} alt="cookieColour" style={{ height: 448, width: 448 }} />
       <button id="eatcookie-button" class="Secondary-button">
         Eat Cookie
+        <text style={{ fontSize: "12px" }}>
+          <em> (or chihuahua)</em>
+        </text>
       </button>
     </div>
   );
