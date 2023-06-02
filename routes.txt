@@ -1,9 +1,9 @@
-loginButton-button,homepage
+loginbutton-button,homepage
 createaccount-button,create
-registeraccount-button,homepage
-registercancel-button,homepage
+registeraccount-button,root
+registercancel-button,root
 home-button,homepage
 mail-button,mail
 settings-button,settings
-signout-button,homepage
+signout-button,root
 changesubmit-button,settings
