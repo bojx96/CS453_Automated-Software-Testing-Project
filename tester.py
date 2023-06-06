@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from bs4 import BeautifulSoup
 import os
-
+import time
 # Class used to handle routes.txt
 class TextParser():
     def __init__(self) -> None:
@@ -26,7 +26,9 @@ class FileParser():
     def __init__(self) -> None:
         self.dictionary = {} # {element : {pages found}}
         self.paths = {} # {"page_from" : {(button, page_to_go )}, ....}
-    
+        self.error_redirections = {} # {(from_page, page_to_go) : button1, ....} this to store all buttons that don't work
+        self.succ_covered_paths = 0
+        self.failed_paths = 0
     def add_path_keys(self, url):
         self.paths[url] = set()
         
@@ -35,7 +37,7 @@ class FileParser():
         for (element_id, pagename) in list_of_tups:
             if element_id in self.dictionary:
                 pages = self.dictionary[element_id]
-                pagename = (f"http:localhost:3000/{pagename}") if pagename != "root" else "http:localhost:3000"
+                pagename = (f"http://localhost:3000/{pagename}") if pagename != "root" else "http://localhost:3000"
                 # print(f"{element_id} in pages {pages}")
                 for page in pages:
                     self.paths[page].add((element_id,pagename))
@@ -110,8 +112,39 @@ class FileParser():
                     print(f"Exception Occured: {result[0]}")
                     print(type(result[0]), end="\n\n")
         print("---------------------------", end="\n\n")
-        
-    
+
+    def beautify(self, path):
+        res = ""
+        for i in range(len(path)):
+            page = path[i]
+            res += page + " "
+            if i != len(path) - 1:
+                res += "-> "
+        return res
+
+    def path_coverage(self, driver, cur_page, used_edges):
+        driver.get(cur_page)
+        end_path = True #flag to check that the current page is the end of path
+        for (button_id, to_page) in self.paths[cur_page]:
+            if (cur_page, button_id, to_page) in used_edges: #checking that this edge already used in current path
+                continue
+            end_path = False
+            elem = driver.find_element(By.ID, button_id)
+            elem.click()
+            new_page = driver.current_url #page after clicking on button
+            used_edges.add((cur_page, button_id, to_page))
+            if new_page != to_page: 
+                #print(f"Button {button_id} doesn't work on page with url {cur_page} to redirect to page {to_page}")
+                self.error_redirections[(cur_page, to_page)] = button_id #remember the errorous button
+                driver.get(cur_page)
+                self.failed_paths += 1
+            else:
+                #print(f"Redirection from {cur_page} to {new_page} is successful!")
+                self.path_coverage(driver, new_page, used_edges) #call recursion for next_page
+                driver.get(cur_page)
+            used_edges.remove((cur_page, button_id, to_page))
+        if end_path:
+            self.succ_covered_paths += 1
 # do sth to the inputs
 
 if __name__ == "__main__":
@@ -156,7 +189,12 @@ if __name__ == "__main__":
         tuples = textParser.getTuples()
         fileParser.handleTuples(tuples)
         # In order to get the paths, access fileParser.paths
-        # print(fileParser.paths)
+        #print(fileParser.paths)
+        fileParser.path_coverage(driver, args.url, set())
+        print(f"Errors appered here: {fileParser.error_redirections}")
+        print(f"Successfully covered paths: {fileParser.succ_covered_paths}")
+        print(f"Failed paths: {fileParser.failed_paths}")
+        #print(f"All paths list: {fileParser.succ_covered_paths}")
         '''
         {'http:localhost:3000': {('loginbutton-button', 'http:localhost:3000/homepage'), ('createaccount-button', 'http:localhost:3000/create')},
         'http:localhost:3000/homepage': {('mail-button', 'http:localhost:3000/mail'), ('settings-button', 'http:localhost:3000/settings'), ('signout-button', 'http:localhost:3000'), ('home-button', 'http:localhost:3000/homepage')},
