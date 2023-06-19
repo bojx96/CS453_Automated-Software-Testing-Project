@@ -37,7 +37,7 @@ class FileParser():
         for (element_id, pagename) in list_of_tups:
             if element_id in self.dictionary:
                 pages = self.dictionary[element_id]
-                pagename = (f"http://localhost:3000/{pagename}") if pagename != "root" else "http://localhost:3000"
+                pagename = (f"http://localhost:3000/{pagename}") if pagename != "root" else "http://localhost:3000/"
                 # print(f"{element_id} in pages {pages}")
                 for page in pages:
                     self.paths[page].add((element_id,pagename))
@@ -140,6 +140,8 @@ class FileParser():
                 self.failed_paths += 1
             else:
                 #print(f"Redirection from {cur_page} to {new_page} is successful!")
+                if self.succ_covered_paths + len(self.error_redirections) > 300:
+                    return
                 self.path_coverage(driver, new_page, used_edges) #call recursion for next_page
                 driver.get(cur_page)
             used_edges.remove((cur_page, button_id, to_page))
@@ -176,7 +178,7 @@ if __name__ == "__main__":
                     fileParser.output_results(test_cases, args.url)
                 else:
                     route_name = filename.split('.')[0]
-                    url = args.url + "/" + route_name
+                    url = args.url + route_name
                     test_cases = fileParser.check_elements(
                         driver, url, elements_to_find)
                     # print(fileParser.dictionary)
@@ -190,17 +192,17 @@ if __name__ == "__main__":
         fileParser.handleTuples(tuples)
         # In order to get the paths, access fileParser.paths
         #print(fileParser.paths)
+        # Number of covered is limited my 300 because it takes too long to colver them all
         fileParser.path_coverage(driver, args.url, set())
         print(f"Errors appered here: {fileParser.error_redirections}")
         print(f"Successfully covered paths: {fileParser.succ_covered_paths}")
         print(f"Failed paths: {fileParser.failed_paths}")
-        #print(f"All paths list: {fileParser.succ_covered_paths}")
         '''
-        {'http:localhost:3000': {('loginbutton-button', 'http:localhost:3000/homepage'), ('createaccount-button', 'http:localhost:3000/create')},
-        'http:localhost:3000/homepage': {('mail-button', 'http:localhost:3000/mail'), ('settings-button', 'http:localhost:3000/settings'), ('signout-button', 'http:localhost:3000'), ('home-button', 'http:localhost:3000/homepage')},
-        'http:localhost:3000/create': {('registercancel-button', 'http:localhost:3000'), ('registeraccount-button', 'http:localhost:3000')},
-        'http:localhost:3000/mail': {('mail-button', 'http:localhost:3000/mail'), ('settings-button', 'http:localhost:3000/settings'), ('signout-button', 'http:localhost:3000'), ('home-button', 'http:localhost:3000/homepage')}, 
-        'http:localhost:3000/settings': {('changesubmit-button', 'http:localhost:3000/settings'), ('settings-button','http:localhost:3000/settings'), ('signout-button', 'http:localhost:3000'), ('home-button', 'http:localhost:3000/homepage'), ('mail-button', 'http:localhost:3000/mail')}}
+        {'http:localhost:3000/': {('loginbutton-button', 'http:localhost:3000/homepage'), ('createaccount-button', 'http:localhost:3000/create')},
+        'http:localhost:3000/homepage': {('mail-button', 'http:localhost:3000/mail'), ('settings-button', 'http:localhost:3000/settings'), ('signout-button', 'http:localhost:3000/'), ('home-button', 'http:localhost:3000/homepage')},
+        'http:localhost:3000/create': {('registercancel-button', 'http:localhost:3000/'), ('registeraccount-button', 'http:localhost:3000/')},
+        'http:localhost:3000/mail': {('mail-button', 'http:localhost:3000/mail'), ('settings-button', 'http:localhost:3000/settings'), ('signout-button', 'http:localhost:3000/'), ('home-button', 'http:localhost:3000/homepage')}, 
+        'http:localhost:3000/settings': {('changesubmit-button', 'http:localhost:3000/settings'), ('settings-button','http:localhost:3000/settings'), ('signout-button', 'http:localhost:3000/'), ('home-button', 'http:localhost:3000/homepage'), ('mail-button', 'http:localhost:3000/mail')}}
         '''
     elif args.path and args.url:
         elements = fileParser.parsing_elements(args.path)
