@@ -43,3 +43,9 @@ On your second terminal, make sure you are at CS453_Automated-Software-Testing-P
 ```
   python3 tester.py -f other/asos -u https://www.asos.com/
 ```
+
+## Problems to solve
+
+Please take a look here:
+* Paths problem [#1](https://github.com/bojx96/CS453_Automated-Software-Testing-Project/issues/2)
+
