@@ -23,3 +23,9 @@ Before you can run the program, some python packages needs to be installed, you 
 
 <!-- How to run our program -->
 ## How to run our program
+
+## Test existing web-pages (simplified)
+
+```
+  python3 tester.py -f other/asos -u https://www.asos.com/
+```
