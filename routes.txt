@@ -1,0 +1,9 @@
+loginbutton-button,homepage
+createaccount-button,create
+registeraccount-button,root
+registercancel-button,root
+home-button,homepage
+mail-button,mail
+settings-button,settings
+signout-button,root
+changesubmit-button,settings
