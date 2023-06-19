@@ -31,7 +31,7 @@ On your first terminal, navigate to frontend\test-app and start the server with 
   ```
 On your second terminal, make sure you are at CS453_Automated-Software-Testing-Project folder, and run the command:
   ```sh
-  py .\tester.py -f .\figmahtmls -u http://localhost:3000
+  py .\tester.py -f .\figmahtmls -u http://localhost:3000/
   ```
   
   flags: <br />
